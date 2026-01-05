@@ -10,7 +10,7 @@ requires-python = ">=3.9"
 dependencies = []
 
 [project.scripts]
-project = "project:main"
+vic = "vic.main:main"
 
 [build-system]
 requires = ["hatchling"]
