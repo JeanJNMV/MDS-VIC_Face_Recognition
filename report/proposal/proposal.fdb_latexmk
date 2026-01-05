@@ -1,14 +1,14 @@
 # Fdb version 3
-["bibtex proposal"] 1767646170 "proposal.aux" "proposal.bbl" "proposal" 1767646171
+["bibtex proposal"] 1767646170 "proposal.aux" "proposal.bbl" "proposal" 1767646320
   "./ieee.bst" 1506832908 19623 f9cd22458ca68af2567100f1aed905e8 ""
   "egbib.bib" 1767480183 1771 a76e7a79cc85c1f8f8812d252b01c17a ""
-  "proposal.aux" 1767646171 2854 240d240e85839faa0cfe60b0338ce616 "pdflatex"
+  "proposal.aux" 1767646320 2854 240d240e85839faa0cfe60b0338ce616 "pdflatex"
   (generated)
   "proposal.bbl"
   "proposal.blg"
-["pdflatex"] 1767646170 "/home/fotis/3A-CS/VIC/project/report/proposal/proposal.tex" "proposal.pdf" "proposal" 1767646171
+["pdflatex"] 1767646319 "/home/fotis/3A-CS/VIC/project/report/proposal/proposal.tex" "proposal.pdf" "proposal" 1767646320
   "/etc/texmf/web2c/texmf.cnf" 1761584602 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/fotis/3A-CS/VIC/project/report/proposal/proposal.tex" 1767646167 8086 caa3dc09b22970d2022018cc6d01fc0d ""
+  "/home/fotis/3A-CS/VIC/project/report/proposal/proposal.tex" 1767646319 8104 a990719db6d605222833a3e050a364c5 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/helvetic/phvb.tfm" 1136768653 2300 14616918391efa49ac8b481a75fbdc1a ""
@@ -109,9 +109,9 @@
   "cvpr.sty" 1506838832 8185 1f09b4535924bf997f66357aa9ee3654 ""
   "cvpr_eso.sty" 1767480480 3878 6aa7c08ff2621006e0603349e40a30a8 ""
   "eso-pic.sty" 1506832908 9460 d2935ae95b5cd343fcf5887ff530288d ""
-  "proposal.aux" 1767646171 2854 240d240e85839faa0cfe60b0338ce616 "pdflatex"
+  "proposal.aux" 1767646320 2854 240d240e85839faa0cfe60b0338ce616 "pdflatex"
   "proposal.bbl" 1767646170 1350 7acf463076964fc0a439884b8792a4a6 "bibtex proposal"
-  "proposal.tex" 1767646167 8086 caa3dc09b22970d2022018cc6d01fc0d ""
+  "proposal.tex" 1767646319 8104 a990719db6d605222833a3e050a364c5 ""
   (generated)
   "proposal.aux"
   "proposal.log"
