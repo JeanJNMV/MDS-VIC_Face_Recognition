@@ -12,3 +12,7 @@ wheels/
 # latex
 *.gz
 *.bbl
+
+
+data/*
+!data/download.sh
