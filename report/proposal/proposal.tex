@@ -109,31 +109,44 @@ global appearance-based methods and is therefore well suited for studying robust
 changes. It provides a classical benchmark for evaluating the effectiveness of discriminative
 subspace methods and local texture-based representations.
 
+\paragraph{Custom In-the-Wild Face Dataset.}
+In addition to standard benchmarks, we collect a small custom face dataset composed of images of the project members acquired in unconstrained, real-world conditions.
+The images exhibit significant variability in illumination, background, pose, facial expression, image quality, and partial occlusions.
+Although limited in size, this dataset provides a qualitative stress test for classical face recognition methods and highlights their limitations outside controlled acquisition settings.
+It complements the ORL and Yale datasets by exposing failure modes that arise in more realistic scenarios.
+
 
 \section{Evaluation}
-
 The proposed methods are evaluated using a combination of quantitative and qualitative analyses,
-with an emphasis on robustness and interpretability rather than raw performance alone.
-
+with an emphasis on robustness and interpretability rather than raw recognition performance.
 \paragraph{Experimental Protocol.}
 For each dataset, we vary the number of training images per subject in order to study sample
-efficiency and sensitivity to limited supervision. Test images are kept fixed across experiments
-to ensure fair comparison between methods.
+efficiency and sensitivity to limited supervision.
+Test images are kept fixed across experiments to ensure fair comparison between methods.
+When applicable, results are averaged over multiple random training splits.
 
-To assess robustness, controlled degradations are applied to the test images, including changes
-in illumination, additive Gaussian noise, image blur, and partial occlusions. These degradations
-are applied at increasing levels of severity to produce robustness curves.
+To assess robustness, controlled degradations are applied to the test images only.
+These include illumination changes, additive Gaussian noise, image blur, and partial occlusions.
+Each degradation is applied at increasing levels of severity, yielding robustness curves that
+characterize performance decay under progressively more challenging conditions.
 
 \paragraph{Evaluation Metrics.}
-Performance is primarily measured using recognition accuracy and confusion matrices. In addition,
-robustness curves are used to visualize performance degradation as a function of noise, blur, or
-occlusion strength.
+Performance is primarily measured using recognition accuracy, complemented by confusion matrices
+to analyze class-specific failure patterns.
+Robustness curves plot recognition accuracy as a function of degradation strength, providing a
+compact visualization of stability under adverse conditions.
 
 \paragraph{Qualitative Analysis.}
 Beyond quantitative metrics, we perform qualitative analysis by visualizing learned Eigenfaces
-and Fisherfaces, as well as representative failure cases. This analysis provides insight into the
-differences between global subspace representations and local texture-based descriptors, and helps
-explain the observed performance trends.
+and Fisherfaces, as well as representative success and failure cases.
+These visualizations help interpret what variations are captured by global subspace methods
+(illumination, identity, or noise) and contrast them with the locality-driven behavior of LBP-based
+descriptors, thereby explaining observed performance trends.
+
+\paragraph{Reference Comparison with Deep Learning Methods.}
+For reference, we also include a comparison with a lightweight deep learning-based face recognition model.
+This comparison is not intended to achieve state-of-the-art performance, but to provide contextual insight into the gap between classical appearance-based methods and modern learned representations, particularly under unconstrained acquisition conditions.
+The deep learning model is evaluated using the same experimental protocol and test sets when possible, and its results are reported solely as a point of reference.
 
 
 % =====================================================
