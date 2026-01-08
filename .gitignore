@@ -1,5 +1,6 @@
 # Python-generated files
 __pycache__/
+.vscode/
 *.py[oc]
 build/
 dist/
@@ -16,3 +17,6 @@ wheels/
 
 data/*
 !data/download.sh
+
+*/*/output/
+test.ipynb
