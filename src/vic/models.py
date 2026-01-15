@@ -14,7 +14,7 @@ class Model(ABC):
         pass
 
 
-class EigenFaces:
+class Eigenfaces:
     def __init__(self, K: int):
         self.K = K
         self.pca = PCA(n_components=K, svd_solver="randomized", whiten=False)
