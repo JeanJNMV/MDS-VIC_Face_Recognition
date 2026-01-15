@@ -21,7 +21,7 @@ def load_orl(path: str = "data/ORL") -> dict[int, np.ndarray]:
     return data
 
 
-def make_fixed_test_indices(data: dict, n_test: int = 5, seed=0):
+def make_fixed_test_indices(data: dict, n_test: int = 5, seed: int = 0) -> tuple[dict, dict]:
     rng = np.random.default_rng(seed)
     test_idx = {}
     pool_idx = {}
@@ -32,7 +32,13 @@ def make_fixed_test_indices(data: dict, n_test: int = 5, seed=0):
     return test_idx, pool_idx
 
 
-def split_with_fixed_test(data, test_idx, pool_idx, n_train, seed=0):
+def split_with_fixed_test(
+    data: dict,
+    test_idx: dict,
+    pool_idx: dict,
+    n_train: int,
+    seed: int = 0,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     rng = np.random.default_rng(seed)
     Xtr, ytr, Xte, yte = [], [], [], []
 
