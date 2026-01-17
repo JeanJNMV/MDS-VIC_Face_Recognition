@@ -26,18 +26,22 @@ def get_average_acc_vs_train_size(
 ):
     master_rng = np.random.default_rng(seed_master)
 
+    # Create fixed test indices ONCE, outside the loop
+    test_idx, pool_idx = make_fixed_test_indices(data, n_test=n_test, seed=seed_master)
+
     avg_accuracy_scores = {}
 
     for i in tqdm(range(n_exp), desc="Experiments"):
-        seed = master_rng.integers(0, 1e6)
+        accuracy_scores = {}
+        for train_size in train_sizes:
+            seed = master_rng.integers(0, 1e6)  # Generate new seed for each train_size
 
-        accuracy_scores, _ = get_metrics_vs_train_size(
-            model,
-            train_sizes,
-            data,
-            n_test=n_test,
-            seed=seed,
-        )
+            Xtr, ytr, Xte, yte = split_with_fixed_test(
+                data, test_idx, pool_idx, train_size, seed=seed
+            )
+            model.fit(Xtr, ytr)
+            y_pred = model.predict(Xte)
+            accuracy_scores[train_size] = accuracy_score(yte, y_pred)
 
         for train_size, acc in accuracy_scores.items():
             avg_accuracy_scores.setdefault(train_size, []).append(acc)
