@@ -1,11 +1,10 @@
-from vic.dataloader import make_fixed_test_indices, split_with_fixed_test
+from vic.dataloader import split_with_fixed_test
 from sklearn.metrics import accuracy_score, confusion_matrix
 from tqdm import tqdm
 import numpy as np
 
 
-def get_metrics_vs_train_size(model, train_sizes, data, n_test=3, seed=0):
-    test_idx, pool_idx = make_fixed_test_indices(data, n_test=n_test, seed=seed)
+def get_metrics_vs_train_size(model, train_sizes, data, test_idx, pool_idx, seed=0):
     accuracy_scores = {}
     conf_matrices = {}
 
@@ -22,12 +21,9 @@ def get_metrics_vs_train_size(model, train_sizes, data, n_test=3, seed=0):
 
 
 def get_average_acc_vs_train_size(
-    model, train_sizes, data, n_exp=10, n_test=3, seed_master=0
+    model, train_sizes, data, test_idx, pool_idx, n_exp=10, seed_master=0
 ):
     master_rng = np.random.default_rng(seed_master)
-
-    # Create fixed test indices ONCE, outside the loop
-    test_idx, pool_idx = make_fixed_test_indices(data, n_test=n_test, seed=seed_master)
 
     avg_accuracy_scores = {}
 
