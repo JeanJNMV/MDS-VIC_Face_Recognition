@@ -2,9 +2,17 @@ from vic.dataloader import split_with_fixed_test
 from sklearn.metrics import accuracy_score, confusion_matrix
 from tqdm import tqdm
 import numpy as np
+from typing import Any, Dict, Tuple, Union, List
 
 
-def get_metrics_vs_train_size(model, train_sizes, data, test_idx, pool_idx, seed=0):
+def get_metrics_vs_train_size(
+    model: Any,
+    train_sizes: Union[np.ndarray, List[int]],
+    data: dict,
+    test_idx: dict,
+    pool_idx: dict,
+    seed: int = 0,
+) -> tuple[dict[int, float], dict[int, np.ndarray]]:
     accuracy_scores = {}
     conf_matrices = {}
 
@@ -21,8 +29,14 @@ def get_metrics_vs_train_size(model, train_sizes, data, test_idx, pool_idx, seed
 
 
 def get_average_acc_vs_train_size(
-    model, train_sizes, data, test_idx, pool_idx, n_exp=10, seed_master=0
-):
+    model: Any,
+    train_sizes: Union[np.ndarray, List[int]],
+    data: dict,
+    test_idx: dict,
+    pool_idx: dict,
+    n_exp: int = 10,
+    seed_master: int = 0,
+) -> tuple[dict[int, float], dict[int, float]]:
     master_rng = np.random.default_rng(seed_master)
 
     avg_accuracy_scores = {}
