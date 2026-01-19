@@ -2,7 +2,7 @@ from vic.dataloader import split_with_fixed_test
 from sklearn.metrics import accuracy_score, confusion_matrix
 from tqdm import tqdm
 import numpy as np
-from typing import Any, Dict, Tuple, Union, List
+from typing import Any, Union, List
 
 
 def get_metrics_vs_train_size(
