@@ -50,8 +50,14 @@ def transform_test_set(
 
         elif operation == "flip":
             direction = kwargs.get("flip_direction", "horizontal")
-            axis = 2 if direction == "horizontal" else 1
-            transformed = np.array([np.flip(img, axis=axis) for img in test_images])
+            if direction == "horizontal":
+                axis = 1
+                transformed = np.array([np.flip(img, axis=axis) for img in test_images])
+            elif direction == "vertical":
+                axis = 0
+                transformed = np.array([np.flip(img, axis=axis) for img in test_images])
+            else:
+                transformed = test_images  # No flip if direction is invalid
 
         elif operation == "brightness":
             factor = kwargs.get("brightness_factor", 1.2)
