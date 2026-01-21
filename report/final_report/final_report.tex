@@ -13,6 +13,7 @@
 % egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
 % run, let it finish, and you should be clear).
 \usepackage[breaklinks=true,bookmarks=false]{hyperref}
+\usepackage{todonotes}
 
 \cvprfinalcopy % *** Uncomment this line for the final submission
 
@@ -43,10 +44,18 @@ Ayoub EL KBADI \and Fotios KAPOTOS \\ CentraleSupélec \and Jean-Vincent MARTINI
 
 \section{Introduction and Motivation}
 
+Face recognition is a fundamental problem in computer vision with applications ranging from access control, security, identity verification, to human - computer interaction. The goal of face recognition is to automatically identify or verify a person based on visual information captured by devices such as cameras. We will not focus on deep learning-based methods, which have become dominant in recent years, but rather on classical appearance-based techniques which are of practical interest due to their interpretability, low computational requirements, and minimal training data requirements.
 
+This project focues on three well-established classical face recognition methods: Eigenfaces, based on Principal Component Analysis (PCA) \cite{turk1991eigenfaces}; Fisherfaces, based on Linear Discriminant Analysis (LDA) \cite{belhumeur1997fisherfaces}; and Local Binary Pattern Histograms (LBPH) \cite{ahonen2004lbp}, which encode local texture information. These methods embody fundamentally different modeling philosophies, ranging from global linear subspace representations to local, texture-based descriptors. % It serves as a final assessment for the course "Introduction to Visual Computing" offered at CentraleSupélec.
+
+We aim to provide a comprehensive comparative evaluation of these methods under varying image acquisition conditions and degradations, such as illumination changes, noise, blur, and partial occlusions. The goal is to determine how robust are these classical techniques to real-world variations and how their performance degrades under those conditions. We will also analyze their sensitivity to limited training data, which is a common practical constraint.
+
+Understanding these questions is important not only for appreciating the evolution of face recognition techniques but also for informing the design of lightweight, interpretable systems in constrained environments or low-data scenarios. Potential applications may include embedded systems, mobile devices, or baseline models for benchmarking and analysis. 
+\todo{pas sûr la si vous avez des idées}
 
 \section{Problem Definition} % A METTRE AVEC INTRO ??
 
+We consider a supervised face recognition problem defined over a labeled dataset of face images. 
 
 
 \section{Related Work}
