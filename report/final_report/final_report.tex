@@ -75,18 +75,51 @@ parameterized by a severity level $\alpha$, modeling effects like illumination c
 \begin{equation*}
     \text{Accuracy} = \frac{1}{|\mathcal{D}_{test}|} \sum_{(x_j, y_j) \in \mathcal{D}_{test}} \mathbb{I}(f(\delta_{\alpha}(x_j)) = y_j)
 \end{equation*}
-on the test set $\mathcal{D}_{test}$ and to analyze how this accuracy degrades with respect to the severity $\alpha$ of the applied degradations.
+on the test set $\mathcal{D}_{test}$ and to analyze how this accuracy degrades with respect to the severity $\alpha$ of the applied degradations. Other way of analyzing the results will include confusion matrices, visualizations of learned subspaces, and representative success and failure cases.
 \todo{estce que j'en ai trop fais la ?}
 
 \section{Related Work}
 
 \section{Methodology}
 \subsection{Face Recognition Algorithms}
+
+\subsubsection{Local Binary Pattern Histograms (LBPH)}
 \subsection{Datasets}
+We conduct our experiments on two standard face recognition datasets that are widely used in
+the evaluation of classical appearance-based methods.
+
+\paragraph{ORL (AT\&T) Face Dataset.}
+The ORL face dataset~\cite{samaria1994orl} contains images of 40 individuals, with 10 grayscale
+images per subject. The images exhibit moderate variations in facial expression, pose, and the
+presence of accessories such as glasses. Due to its controlled nature and limited variability,
+this dataset is well suited for analyzing baseline performance and the impact of training set
+size on recognition accuracy.
+
+\paragraph{Yale Face Dataset.}
+The Yale face dataset~\cite{georghiades2001yale} includes frontal face images captured under
+systematically varying illumination conditions. This dataset is particularly challenging for
+global appearance-based methods and is therefore well suited for studying robustness to lighting
+changes. It provides a classical benchmark for evaluating the effectiveness of discriminative
+subspace methods and local texture-based representations. 
+
+\paragraph{Custom In-the-Wild Face Dataset.}
+In addition to standard benchmarks, we collect a small custom face dataset composed of images of the project members acquired in unconstrained, real-world conditions.
+The images exhibit significant variability in illumination, background, pose, facial expression, image quality, and partial occlusions.
+Although limited in size, this dataset provides a qualitative stress test for classical face recognition methods and highlights their limitations outside controlled acquisition settings.
+It complements the ORL and Yale datasets by exposing failure modes that arise in more realistic scenarios.
+\todo{j'ai juste copié collé du proposal, besoin de + ?}
+
 \section{Evaluation}
 \section{Conclusions}
 
-{\Huge Proposal} 
+{\small
+\bibliographystyle{ieee}
+\bibliography{egbib}
+}
+
+\newpage
+{\Huge Proposal} (to be removed later)
+\setcounter{section}{0}
 \section{Motivation and Problem Definition}
 
 Face recognition is a fundamental problem in computer vision with applications in security,
@@ -212,9 +245,5 @@ The project aims to deliver:
 
 
 
-{\small
-\bibliographystyle{ieee}
-\bibliography{egbib}
-}
 
 \end{document}
