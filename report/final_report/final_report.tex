@@ -55,12 +55,34 @@ Understanding these questions is important not only for appreciating the evoluti
 
 \section{Problem Definition} % A METTRE AVEC INTRO ??
 
-We consider a supervised face recognition problem defined over a labeled dataset of face images. 
+We consider a supervised face recognition problem defined over a labeled dataset of face images. Let 
+\begin{equation*}
+    \mathcal{D} = \{(x_i, y_i)\}_{i=1}^N
+\end{equation*}
+denote a dataset of $N$ grayscale face images, where $x_i \in \mathbb{R}^{H \times W}$ represents the $i$-th image of height $H$ and width $W$, and $y_i \in \{1, 2, \ldots, C\}$ is the corresponding identity label indicating one of $C$ distinct individuals. Each image is assumed to be preprocessed to a standard size and aligned such that facial features are approximately centered, but may vary in terms of illumination, pose, expression, noise level, or partial occlusions.
 
+Given a training subset $\mathcal{D}_{train} \subset \mathcal{D}$, the task is to learn a mapping function
+\begin{equation*}
+    f: \mathbb{R}^{H \times W} \rightarrow \{1, 2, \ldots, C\}
+\end{equation*}
+that predicts the identity label of previously unseen test images. 
+
+To evaluate robustness, we consider a family of image degradation operators 
+\begin{equation*}
+    \delta_{\alpha}: \mathbb{R}^{H \times W} \rightarrow \mathbb{R}^{H \times W}
+\end{equation*}
+parameterized by a severity level $\alpha$, modeling effects like illumination changes, additive Gaussian noise, blur, rotation, etc. The primarily objective is always to maximize recognition accuracy
+\begin{equation*}
+    \text{Accuracy} = \frac{1}{|\mathcal{D}_{test}|} \sum_{(x_j, y_j) \in \mathcal{D}_{test}} \mathbb{I}(f(\delta_{\alpha}(x_j)) = y_j)
+\end{equation*}
+on the test set $\mathcal{D}_{test}$ and to analyze how this accuracy degrades with respect to the severity $\alpha$ of the applied degradations.
+\todo{estce que j'en ai trop fais la ?}
 
 \section{Related Work}
 
 \section{Methodology}
+\subsection{Face Recognition Algorithms}
+\subsection{Datasets}
 \section{Evaluation}
 \section{Conclusions}
 
