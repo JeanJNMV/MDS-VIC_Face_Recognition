@@ -53,7 +53,7 @@ We aim to provide a comprehensive comparative evaluation of these methods under 
 Understanding these questions is important not only for appreciating the evolution of face recognition techniques but also for informing the design of lightweight, interpretable systems in constrained environments or low-data scenarios. Potential applications may include embedded systems, mobile devices, or baseline models for benchmarking and analysis. 
 \todo{pas sûr la si vous avez des idées}
 
-\section{Problem Definition} % A METTRE AVEC INTRO ??
+\section{Problem Definition} 
 
 We consider a supervised face recognition problem defined over a labeled dataset of face images. Let 
 \begin{equation*}
@@ -84,6 +84,38 @@ on the test set $\mathcal{D}_{test}$ and to analyze how this accuracy degrades w
 \subsection{Face Recognition Algorithms}
 
 \subsubsection{Local Binary Pattern Histograms (LBPH)}
+
+LBPH is a texture-based face recognition method that encodes local appearance information while preserving spatial structure. This approach was introduced by Ahonen et al. \cite{ahonen2004lbp}, motivated by the observation that face images can be viewed as compositions of local texture patterns, such as edges, spots, and flat areas.
+
+The core component of LBPH is the Local Binary Pattern (LBP) operator introduced by Ojala et al. \cite{ojala1996comparative}. Applied to a grayscale image, the LBP operator is computed at each pixel location $(x, y)$ by thresholding the pixel’s neighborhood against its center value. In the basic $3 \times 3$ case, the operator compares the center pixel intensity $g_c$ with its 8 surrounding neighbors $\{g_p\}_{p=0}^{7}$, producing a binary code:
+
+\begin{equation}
+    \text{LBP}(x, y) = \sum_{p=0}^{7} s(g_p - g_c) 2^p, \quad s(t) = \begin{cases} 1, & t \geq 0 \\ 0, & t < 0 \end{cases}
+\end{equation}
+
+This formulation was later generalized to circular neighborhoods $P$ sampling points on a circle of radius $R$ \cite{ojala2002multiresolution}, allowing for multi-scale texture analysis. Another important extension to the original LBP operator is the concept of uniform patterns \cite{ojala2002multiresolution}, which reduces the number of possible LBP codes by focusing on patterns with at most two bitwise transitions. This significantly decreases the dimensionality of the resulting histograms while retaining discriminative power.
+
+While a global LBP histogram captures texture information, it discards spatial layout, which is crucial for face recognition. To address this, the LBPH method divides the face image into $m$ distinct rectangular regions $\{R_j\}_{j=0}^{m-1}$. For each region, an LBP histogram $H_{i,j}$ is computed:
+
+\begin{equation}
+    H_{i,j} = \sum_{(x,y)} \mathbb{I}\{\text{LBP}(x,y) = i\}\mathbb{I}\{(x,y) \in R_j\}
+\end{equation}
+where $i$ indexes the LBP labels. The final feature vector for the face image is obtained by concatenating all regional histograms into a single feature vector. This representation encodes texture information at three different levels: pixel-level (via LBP codes), region-level (via histograms), and global-level (via concatenation).
+
+Face recognition is then performed using a nearest-neighbor classifier in the histogram feature space. Given two feature vectors $S$ and $M$, many distance metrics can be used to measure similarity, such as histogram intersection, log-likelihood, and $\chi^2$ distance. We ultimately use the $\chi^2$ distance, due its better performance in practice \cite{ahonen2004lbp}:
+
+\begin{equation}
+    \chi^2(S, M) = \sum_{i,j} \frac{(S_{i,j} - M_{i,j})^2}{S_{i,j} + M_{i,j}}
+\end{equation}
+
+Moreover, the $\chi^2$ formulation naturally extends to a weighted version, allowing for differential emphasis on certain regions if desired:
+
+\begin{equation}
+    \chi^2_w(S, M) = \sum_{i,j} w_{j} \frac{(S_{i,j} - M_{i,j})^2}{S_{i,j} + M_{i,j}}
+\end{equation}
+
+As explained, LPBH involves several hyperparameters that can be tuned to optimize performance for a given dataset and application. These include the number of sampling points $P$ and radius $R$ for the LBP operator, the number of regions $m$ to divide the face image into, etc. Ahonen et al. show that LBPH performance is relatively insensitive to moderate changes in these parameters, offering a favorable trade-off between recognition accuracy and feature dimensionality. Despite its robustness to illumination changes, facial expressions, and moderate misalignment, LBPH has notable limitations. The concatenated histograms can become high-dimensional, leading to increased memory usage and slower matching for large datasets. Furthermore, the method relies on handcrafted features and nearest-neighbor classification, limiting its ability to model complex intra-class variations.
+
 \subsection{Datasets}
 We conduct our experiments on two standard face recognition datasets that are widely used in
 the evaluation of classical appearance-based methods.
