@@ -1,11 +1,19 @@
-from vic.dataloader import make_fixed_test_indices, split_with_fixed_test
+from vic.dataloader import split_with_fixed_test
 from sklearn.metrics import accuracy_score, confusion_matrix
 from tqdm import tqdm
 import numpy as np
+from typing import Any, Union, List
+from joblib import Parallel, delayed
 
 
-def get_metrics_vs_train_size(model, train_sizes, data, n_test=3, seed=0):
-    test_idx, pool_idx = make_fixed_test_indices(data, n_test=n_test, seed=seed)
+def get_metrics_vs_train_size(
+    model: Any,
+    train_sizes: Union[np.ndarray, List[int]],
+    data: dict,
+    test_idx: dict,
+    pool_idx: dict,
+    seed: int = 0,
+) -> tuple[dict[int, float], dict[int, np.ndarray]]:
     accuracy_scores = {}
     conf_matrices = {}
 
@@ -22,12 +30,15 @@ def get_metrics_vs_train_size(model, train_sizes, data, n_test=3, seed=0):
 
 
 def get_average_acc_vs_train_size(
-    model, train_sizes, data, n_exp=10, n_test=3, seed_master=0
-):
+    model: Any,
+    train_sizes: Union[np.ndarray, List[int]],
+    data: dict,
+    test_idx: dict,
+    pool_idx: dict,
+    n_exp: int = 10,
+    seed_master: int = 0,
+) -> tuple[dict[int, float], dict[int, float]]:
     master_rng = np.random.default_rng(seed_master)
-
-    # Create fixed test indices ONCE, outside the loop
-    test_idx, pool_idx = make_fixed_test_indices(data, n_test=n_test, seed=seed_master)
 
     avg_accuracy_scores = {}
 
@@ -54,3 +65,30 @@ def get_average_acc_vs_train_size(
     }
 
     return mean_accuracy_scores, std_accuracy_scores
+
+
+def get_metrics_vs_train_size_joblib(
+    model_factory: callable,
+    train_sizes: Union[np.ndarray, List[int]],
+    data: dict,
+    test_idx: dict,
+    pool_idx: dict,
+    seed: int = 0,
+    n_jobs: int = 4,
+):
+    def worker(train_size):
+        model = model_factory()
+        Xtr, ytr, Xte, yte = split_with_fixed_test(
+            data, test_idx, pool_idx, train_size, seed=seed
+        )
+        model.fit(Xtr, ytr)
+        y_pred = model.predict(Xte)
+        return train_size, accuracy_score(yte, y_pred), confusion_matrix(yte, y_pred)
+
+    results = Parallel(n_jobs=n_jobs, backend="loky")(
+        delayed(worker)(ts) for ts in train_sizes
+    )
+
+    acc = {ts: a for ts, a, _ in results}
+    cms = {ts: cm for ts, _, cm in results}
+    return acc, cms
