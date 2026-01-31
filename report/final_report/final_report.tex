@@ -80,8 +80,25 @@ on the test set $\mathcal{D}_{test}$ and to analyze how this accuracy degrades w
 
 \section{Related Work}
 
+The Eigenfaces method introduced by Turk and Pentland applies Principal Component Analysis (PCA)
+to project face images into a low-dimensional subspace that captures the main modes of variation \cite{turk1991eigenfaces}.
+While effective in controlled settings, Eigenfaces remain highly sensitive to illumination changes.
+
+Fisherfaces extend this approach by using Linear Discriminant Analysis (LDA) to maximize class separability, leading to improved robustness under varying lighting conditions, provided that sufficient training samples are available \cite{belhumeur1997fisherfaces}. Unlike PCA, which minimizes total reconstruction error, LDA explicitly discriminates between classes, making it more suitable for classification tasks where lighting variation exceeds identity variation.
+
+Local Binary Pattern Histograms (LBPH) represent faces using local texture descriptors computed over small neighborhoods \cite{ahonen2004lbp}. This local representation has been shown to be more robust to lighting variations and partial occlusions compared to holistic methods, albeit at the expense of increased sensitivity to noise.
+
+Significant advancements in face recognition have recently been driven by deep convolutional neural networks (CNNs), which learn hierarchical feature representations directly from raw pixels. A pivotal shift occurred with the introduction of DeepFace, which approached human-level performance by utilizing a deep CNN trained on a massive dataset to learn generic face representations \cite{taigman2014deepface}. This was followed by FaceNet, which introduced the triplet loss function to map face images directly into a compact Euclidean space where distances correspond to face similarity, unifying representation and verification \cite{schroff2015facenet}. More recently, margin-based loss functions, such as those used in ArcFace, have further enhanced discrimination by enforcing angular margins between classes in the embedding space, significantly improving performance on unconstrained large-scale benchmarks \cite{deng2019arcface}.
+
+\todo{fais rapidement, à compléter ?}
+
+
 \section{Methodology}
 \subsection{Face Recognition Algorithms}
+
+\subsubsection{Eigenfaces}
+
+\subsubsection{Fisherfaces}
 
 \subsubsection{Local Binary Pattern Histograms (LBPH)}
 
@@ -139,9 +156,10 @@ In addition to standard benchmarks, we collect a small custom face dataset compo
 The images exhibit significant variability in illumination, background, pose, facial expression, image quality, and partial occlusions.
 Although limited in size, this dataset provides a qualitative stress test for classical face recognition methods and highlights their limitations outside controlled acquisition settings.
 It complements the ORL and Yale datasets by exposing failure modes that arise in more realistic scenarios.
-\todo{j'ai juste copié collé du proposal, besoin de + ?}
+\todo{estc-ce qu'on le fait vraiment ?}
 
 \section{Evaluation}
+
 \section{Conclusions}
 
 {\small
