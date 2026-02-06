@@ -90,13 +90,34 @@ Local Binary Pattern Histograms (LBPH) represent faces using local texture descr
 
 Significant advancements in face recognition have recently been driven by deep convolutional neural networks (CNNs), which learn hierarchical feature representations directly from raw pixels. A pivotal shift occurred with the introduction of DeepFace, which approached human-level performance by utilizing a deep CNN trained on a massive dataset to learn generic face representations \cite{taigman2014deepface}. This was followed by FaceNet, which introduced the triplet loss function to map face images directly into a compact Euclidean space where distances correspond to face similarity, unifying representation and verification \cite{schroff2015facenet}. More recently, margin-based loss functions, such as those used in ArcFace, have further enhanced discrimination by enforcing angular margins between classes in the embedding space, significantly improving performance on unconstrained large-scale benchmarks \cite{deng2019arcface}.
 
-\todo{fais rapidement, à compléter ?}
-
 
 \section{Methodology}
 \subsection{Face Recognition Algorithms}
 
 \subsubsection{Eigenfaces}
+
+The Eigenfaces method, introduced by Turk and Pentland \cite{turk1991eigenfaces}, is based on Principal Component Analysis (PCA). The core idea is to represent face images in a low-dimensional linear subspace that captures the dominant modes of variation present in the training data.
+
+Each grayscale face image \( x_i \in \mathbb{R}^{H \times W} \) is vectorized into a column vector \( \mathbf{x}_i \in \mathbb{R}^{D} \), where \( D = H \cdot W \). Given a training set of \( N \) images, the mean face is computed as
+\[
+\boldsymbol{\mu} = \frac{1}{N} \sum_{i=1}^{N} \mathbf{x}_i .
+\]
+The centered data vectors are then defined as \( \tilde{\mathbf{x}}_i = \mathbf{x}_i - \boldsymbol{\mu} \) and stacked into a data matrix
+\[
+X = [\tilde{\mathbf{x}}_1, \tilde{\mathbf{x}}_2, \dots, \tilde{\mathbf{x}}_N] \in \mathbb{R}^{D \times N}.
+\]
+
+PCA aims to find an orthonormal basis that maximizes the variance of the projected data. This is achieved by computing the eigenvectors of the covariance matrix
+\[
+C = \frac{1}{N} XX^\top .
+\]
+Since the image dimensionality \( D \) is typically much larger than the number of training samples \( N \), the eigen-decomposition is efficiently performed using the smaller matrix \( X^\top X \). The leading \( K \) eigenvectors of \( C \), corresponding to the largest eigenvalues, define the principal subspace. When reshaped back to image form, these eigenvectors are referred to as \emph{eigenfaces}.
+
+A face image \( \mathbf{x} \) is projected onto the eigenface subspace by
+\[
+\mathbf{z} = U_K^\top (\mathbf{x} - \boldsymbol{\mu}),
+\]
+where \( U_K \in \mathbb{R}^{D \times K} \) contains the top \( K \) eigenvectors. Face recognition is then performed by comparing projected feature vectors using a distance metric such as Euclidean distance, typically within a nearest-neighbor classification framework.
 
 \subsubsection{Fisherfaces}
 
@@ -159,6 +180,15 @@ It complements the ORL and Yale datasets by exposing failure modes that arise in
 \todo{estc-ce qu'on le fait vraiment ?}
 
 \section{Evaluation}
+
+\subsection{Global Comparison of Methods}
+
+\subsection{Robustness Analysis by Method}
+\subsubsection{Eigenfaces}
+\subsubsection{Fisherfaces}
+\subsubsection{Local Binary Pattern Histogram}
+
+\subsection{Deep Learning}
 
 \section{Conclusions}
 

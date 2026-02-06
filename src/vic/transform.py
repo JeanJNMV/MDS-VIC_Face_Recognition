@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.ndimage import rotate, gaussian_filter
+from scipy.ndimage import gaussian_filter, rotate
 
 
 def transform_test_set(
@@ -33,9 +33,7 @@ def transform_test_set(
 
         if operation == "rotate":
             angle = kwargs.get("angle", 15)
-            transformed = np.array(
-                [rotate(img, angle, reshape=False, order=1) for img in test_images]
-            )
+            transformed = np.array([rotate(img, angle, reshape=False, order=1) for img in test_images])
 
         elif operation == "noise":
             std = kwargs.get("noise_std", 10.0)
@@ -44,9 +42,7 @@ def transform_test_set(
 
         elif operation == "blur":
             std = kwargs.get("blur_std", 1.0)
-            transformed = np.array(
-                [gaussian_filter(img, sigma=std) for img in test_images]
-            )
+            transformed = np.array([gaussian_filter(img, sigma=std) for img in test_images])
 
         elif operation == "flip":
             direction = kwargs.get("flip_direction", "horizontal")
