@@ -183,13 +183,129 @@ It complements the ORL and Yale datasets by exposing failure modes that arise in
 
 \subsection{Global Comparison of Methods}
 
+We now provide a global comparison between the three classical face recognition methods. 
+For both methods, we evaluate recognition accuracy as a function of the number of training images per subject, using a fixed test protocol and multiple random splits. Reported values correspond to mean accuracies over repeated experiments.
+
+\paragraph{ORL dataset.}
+Figure~\ref{fig:global_orl} reports the accuracy obtained on the ORL dataset as the number of training images per subject increases from 1 to 7.
+
+Eigenfaces exhibit a strong dependency on the amount of available training data. With very limited supervision (1-2 images per subject), performance is relatively low and unstable, reflecting the difficulty of estimating a meaningful global PCA subspace from few samples. Accuracy improves steadily as more images are available, eventually reaching a plateau around 92--93\% for 6-7 training images per subject.
+
+In contrast, LBPH consistently outperforms Eigenfaces across all training regimes. Even in the low-data setting, LBPH achieves higher accuracy, and its performance saturates earlier, exceeding 97\% accuracy from 5 training images per subject onward. This behavior highlights the robustness of local texture-based representations when only limited data is available.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{../../figures/GlobalComp_ORL_noDeep.png}
+    \caption{Recognition accuracy on the ORL dataset as a function of the number of training images per subject. Eigenfaces and LBPH are compared using identical evaluation protocols.}
+    \label{fig:global_orl}
+\end{figure}
+
+
+\paragraph{Yale dataset.}
+Figure~\ref{fig:global_yale} presents the same comparison on the Yale dataset, which is more challenging due to stronger illumination variations and facial expression changes.
+
+Overall accuracies are lower than on ORL for both methods. Eigenfaces show clear saturation around 82\%, even as the number of training images increases, indicating a limited capacity to model the variability present in the dataset. Increasing the training set beyond 6 images per subject brings little to no improvement.
+
+LBPH again demonstrates superior robustness. While the gap between the two methods is smaller than on ORL, LBPH consistently achieves higher accuracy, reaching approximately 84--85\% at saturation. This confirms that local descriptors are less sensitive to global appearance changes such as illumination, which strongly affect PCA-based representations.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{../../figures/GlobalComp_Yale_noDeep.png}
+    \caption{Recognition accuracy on the Yale dataset as a function of the number of training images per subject. The dataset exhibits stronger illumination and expression variability, resulting in lower overall performance.}
+    \label{fig:global_yale}
+\end{figure}
+
+\paragraph{Discussion.}
+Across both datasets, LBPH dominates Eigenfaces in all training regimes. The advantage is particularly pronounced in low-data settings and on datasets with strong appearance variability. Eigenfaces rely on a global linear subspace and precise pixel-level alignment, making them sensitive to limited data and distribution shifts. LBPH, by contrast, encodes local texture patterns and is therefore more robust to such variations.
+
+
 \subsection{Robustness Analysis by Method}
 \subsubsection{Eigenfaces}
+\paragraph{Influence of the number of principal components.}
+We first analyze the sensitivity of Eigenfaces to the number of retained principal components \(K\). The results can be seen in \ref{fig:eigenfaces_hyper}. This parameter directly controls the dimensionality of the PCA subspace.
+
+Across both ORL and Yale datasets, we observe a rapid improvement in recognition accuracy as \(K\) increases from very small values. However, this gain quickly saturates: beyond approximately \(K = 50\), increasing the number of components yields marginal or no improvement. In some cases, performance even slightly fluctuates due to overfitting to dataset-specific variations. This behavior indicates that most discriminative identity information is captured by the leading eigenvectors, and that retaining additional components mainly encodes noise, illumination changes, or other non-discriminative factors.
+
+As a result, all subsequent Eigenfaces experiments are conducted using values of \(K\) within this saturation regime, ensuring that observed failures cannot be attributed to an under-parameterized representation.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{../../figures/eigenfaces_hyper.png}
+    \caption{Impact of $K$ on ORL and Yale dataset}
+    \label{fig:eigenfaces_hyper}
+\end{figure}
+
+\paragraph{Global robustness evaluation protocol.}
+To assess the robustness of Eigenfaces, we evaluate its performance under a range of controlled image transformations designed to violate the method's core assumptions. For each transformation, we apply the same perturbation to both training and test images and report mean accuracy over multiple random train--test splits with a fixed test set.
+
+Figure~\ref{fig:eigenfaces_stage1} presents a global comparison of several transformation families, including Gaussian blur, photometric jitter with impulsive noise, random rotations, and random cropping. These transformations probe complementary failure modes such as loss of high-frequency information, photometric instability, and geometric misalignment.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{../../figures/eigenfaces_noise.png}
+    \caption{Impact of transformations on the accuray of Eigenfaces}
+    \label{fig:eigenfaces_stage1}
+\end{figure}
+
+\paragraph{Breakdown by transformation type.}
+The global comparison reveals that Eigenfaces are particularly sensitive to geometric perturbations. Random rotations and random crops cause the most severe drops in accuracy on both datasets, even at moderate transformation strengths. This confirms that Eigenfaces rely heavily on strict pixel-level alignment and lack any form of geometric invariance. In contrast, Gaussian blur induces almost n not degradation, suggesting that while high-frequency details contribute to identity discrimination, they are not the sole determining factor.
+
+Photometric jitter combined with salt-and-pepper noise also significantly impacts performance and leads to increased variance across runs. This reflects the global nature of PCA-based representations: localized corruption or intensity shifts affect the entire projected feature vector.
+
+\begin{figure}[t]
+    \centering
+
+    % --- Top row ---
+    \includegraphics[width=0.48\linewidth]{../../figures/eigenfaces_gb.png}
+    \hfill
+    \includegraphics[width=0.48\linewidth]{../../figures/eigenfaces_sp_noise.png}
+
+    \vspace{0.4cm}
+
+    % --- Bottom row ---
+    \includegraphics[width=0.48\linewidth]{../../figures/eigenfaces_rotations.png}
+    \hfill
+    \includegraphics[width=0.48\linewidth]{../../figures/eigenfaces_crops.png}
+
+    \caption{Severity analysis of Eigenfaces under different transformation families. 
+    Top-left: Gaussian blur. Top-right: photometric jitter with salt-and-pepper noise.
+    Bottom-left: random rotations. Bottom-right: random cropping.
+    Accuracy is reported as a function of transformation severity (mean $\pm$ standard deviation).}
+    \label{fig:eigenfaces_stage2}
+\end{figure}
+
+
 \subsubsection{Fisherfaces}
 \subsubsection{Local Binary Pattern Histogram}
 
 \subsection{Deep Learning}
 
+We additionally evaluate a simple convolutional neural network as a deep learning baseline. The model (\texttt{TinyCNN}) consists of two convolutional layers followed by max-pooling, adaptive average pooling, and two fully connected layers. It operates on grayscale images and is trained from scratch using cross-entropy loss and the Adam optimizer, without data augmentation or pretraining.
+
+Figure~\ref{fig:dl_orl} and Figure~\ref{fig:dl_yale} report recognition accuracy as a function of the number of training images per subject on the ORL and Yale datasets.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.85\linewidth]{../../figures/GlobalComp_ORL_Deep.png}
+    \caption{Recognition accuracy on the ORL dataset as a function of the number of training images per subject.}
+    \label{fig:dl_orl}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.85\linewidth]{../../figures/GlobalComp_Yale_Deep.png}
+    \caption{Recognition accuracy on the Yale dataset as a function of the number of training images per subject.}
+    \label{fig:dl_yale}
+\end{figure}
+
+\paragraph{Results.}
+On ORL, the deep learning model improves as the number of training images increases and reaches reasonable performance for larger training sets, but remains inferior to LBPH and Eigenfaces in the low-data regime. We hypothesize that this behavior is due to overfitting, as ORL exhibits limited variability and therefore does not reflect realistic generalization performance.
+
+On Yale, performance remains significantly lower across all training regimes and exhibits high variance. This confirms our hypothesis regarding the limitations observed on ORL: deep learning models require substantially larger amounts of data to generalize effectively and are not well suited to the present task.
+
+\paragraph{Discussion.}
+Overall, these results highlight the strong data dependency of deep learning approaches. While convolutional models have high representational capacity, they require larger datasets or additional regularization strategies to outperform classical methods in small-sample face recognition settings.
 \section{Conclusions}
 
 {\small

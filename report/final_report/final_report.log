@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.10.27)  6 FEB 2026 11:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.10.27)  7 FEB 2026 15:34
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -824,49 +824,113 @@ Overfull \hbox (2.66595pt too wide) in paragraph at lines 180--180
 [][][] 
  []
 
-(./final_report.bbl [3])pdfTeX warning (ext4): destination with the same identifier (name{section.1}) has been already used, duplicate ignored
+[3]
+<../../figures/GlobalComp_ORL_noDeep.png, id=89, 497.9403pt x 354.123pt>
+File: ../../figures/GlobalComp_ORL_noDeep.png Graphic file (type png)
+<use ../../figures/GlobalComp_ORL_noDeep.png>
+Package pdftex.def Info: ../../figures/GlobalComp_ORL_noDeep.png  used on input line 198.
+(pdftex.def)             Requested size: 189.70947pt x 134.91394pt.
+<../../figures/GlobalComp_Yale_noDeep.png, id=92, 497.9403pt x 354.123pt>
+File: ../../figures/GlobalComp_Yale_noDeep.png Graphic file (type png)
+<use ../../figures/GlobalComp_Yale_noDeep.png>
+Package pdftex.def Info: ../../figures/GlobalComp_Yale_noDeep.png  used on input line 213.
+(pdftex.def)             Requested size: 189.70947pt x 134.91394pt.
+
+Underfull \hbox (badness 4846) in paragraph at lines 219--220
+ []\OT1/ptm/b/n/10 Discussion.[] \OT1/ptm/m/n/10 Across both datasets, LBPH dom-i-nates
+ []
+
+[4 <../../figures/GlobalComp_ORL_noDeep.png> <../../figures/GlobalComp_Yale_noDeep.png>]
+<../../figures/eigenfaces_hyper.png, id=111, 426.393pt x 281.853pt>
+File: ../../figures/eigenfaces_hyper.png Graphic file (type png)
+<use ../../figures/eigenfaces_hyper.png>
+Package pdftex.def Info: ../../figures/eigenfaces_hyper.png  used on input line 233.
+(pdftex.def)             Requested size: 213.4209pt x 141.07237pt.
+<../../figures/eigenfaces_noise.png, id=113, 1076.1003pt x 357.7365pt>
+File: ../../figures/eigenfaces_noise.png Graphic file (type png)
+<use ../../figures/eigenfaces_noise.png>
+Package pdftex.def Info: ../../figures/eigenfaces_noise.png  used on input line 246.
+(pdftex.def)             Requested size: 237.13594pt x 78.8278pt.
+<../../figures/eigenfaces_gb.png, id=114, 426.393pt x 281.853pt>
+File: ../../figures/eigenfaces_gb.png Graphic file (type png)
+<use ../../figures/eigenfaces_gb.png>
+Package pdftex.def Info: ../../figures/eigenfaces_gb.png  used on input line 260.
+(pdftex.def)             Requested size: 113.82423pt x 75.23688pt.
+<../../figures/eigenfaces_sp_noise.png, id=115, 426.393pt x 281.853pt>
+File: ../../figures/eigenfaces_sp_noise.png Graphic file (type png)
+<use ../../figures/eigenfaces_sp_noise.png>
+Package pdftex.def Info: ../../figures/eigenfaces_sp_noise.png  used on input line 262.
+(pdftex.def)             Requested size: 113.82423pt x 75.23688pt.
+<../../figures/eigenfaces_rotations.png, id=116, 426.393pt x 281.853pt>
+File: ../../figures/eigenfaces_rotations.png Graphic file (type png)
+<use ../../figures/eigenfaces_rotations.png>
+Package pdftex.def Info: ../../figures/eigenfaces_rotations.png  used on input line 267.
+(pdftex.def)             Requested size: 113.82423pt x 75.23688pt.
+<../../figures/eigenfaces_crops.png, id=117, 433.62pt x 289.08pt>
+File: ../../figures/eigenfaces_crops.png Graphic file (type png)
+<use ../../figures/eigenfaces_crops.png>
+Package pdftex.def Info: ../../figures/eigenfaces_crops.png  used on input line 269.
+(pdftex.def)             Requested size: 113.82423pt x 75.88242pt.
+
+Underfull \hbox (badness 1067) in paragraph at lines 284--285
+\OT1/ptm/m/n/10 ral net-work as a deep learn-ing base-line. The model
+ []
+
+<../../figures/GlobalComp_ORL_Deep.png, id=120, 497.9403pt x 354.123pt>
+File: ../../figures/GlobalComp_ORL_Deep.png Graphic file (type png)
+<use ../../figures/GlobalComp_ORL_Deep.png>
+Package pdftex.def Info: ../../figures/GlobalComp_ORL_Deep.png  used on input line 290.
+(pdftex.def)             Requested size: 201.56699pt x 143.34877pt.
+<../../figures/GlobalComp_Yale_Deep.png, id=121, 498.663pt x 354.123pt>
+File: ../../figures/GlobalComp_Yale_Deep.png Graphic file (type png)
+<use ../../figures/GlobalComp_Yale_Deep.png>
+Package pdftex.def Info: ../../figures/GlobalComp_Yale_Deep.png  used on input line 297.
+(pdftex.def)             Requested size: 201.56699pt x 143.13803pt.
+[5 <../../figures/eigenfaces_hyper.png> <../../figures/eigenfaces_noise.png> <../../figures/eigenfaces_gb.png> <../../figures/eigenfaces_sp_noise.png> <../../figures/eigenfaces_rotations.png> <../../figures/eigenfaces_crops.png>] (./final_report.bbl) [6 <../../figures/GlobalComp_ORL_Deep.png> <../../figures/GlobalComp_Yale_Deep.png>]pdfTeX warning (ext4): destination with the same identifier (name{section.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.203 \section{Motivation and Problem Definition}
+l.319 \section{Motivation and Problem Definition}
                                                  
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 213.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 329.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )pdfTeX warning (ext4): destination with the same identifier (name{section.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.226 \section{Related Work}
+l.342 \section{Related Work}
                             pdfTeX warning (ext4): destination with the same identifier (name{section.3}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.243 \section{Methodology}
-                            [4]pdfTeX warning (ext4): destination with the same identifier (name{section.4}) has been already used, duplicate ignored
+l.359 \section{Methodology}
+                           pdfTeX warning (ext4): destination with the same identifier (name{section.4}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.282 \section{Evaluation}
-                          
-Underfull \hbox (badness 1924) in paragraph at lines 310--313
+l.398 \section{Evaluation}
+                           [7]
+Underfull \hbox (badness 1924) in paragraph at lines 426--429
 \OT1/ptm/m/n/10 For ref-er-ence, we also in-clude a com-par-i-son with a
  []
 
 pdfTeX warning (ext4): destination with the same identifier (name{section.5}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.316 \section{Expected Contributions}
-                                       [5] (./final_report.aux) ) 
+l.432 \section{Expected Contributions}
+                                       [8
+
+] (./final_report.aux) ) 
 Here is how much of TeX's memory you used:
- 20990 strings out of 478287
- 392290 string characters out of 5849288
- 664994 words of memory out of 5000000
- 38737 multiletter control sequences out of 15000+600000
- 497703 words of font info for 90 fonts, out of 8000000 for 9000
+ 21105 strings out of 478287
+ 395471 string characters out of 5849288
+ 666124 words of memory out of 5000000
+ 38814 multiletter control sequences out of 15000+600000
+ 500383 words of font info for 100 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,9n,94p,1491b,953s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on final_report.pdf (5 pages, 192304 bytes).
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrro8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on final_report.pdf (8 pages, 550404 bytes).
 PDF statistics:
- 196 PDF objects out of 1000 (max. 8388607)
- 157 compressed objects within 2 object streams
- 53 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 271 PDF objects out of 1000 (max. 8388607)
+ 202 compressed objects within 3 object streams
+ 71 named destinations out of 1000 (max. 500000)
+ 63 words of extra memory for PDF output out of 10000 (max. 10000000)
 
