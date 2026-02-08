@@ -49,7 +49,6 @@ class Eigenfaces:
 
 
 class Fisherfaces:
-    """Fisherfaces with optional strict (paper-aligned) mode."""
 
     def __init__(
         self,
@@ -112,7 +111,7 @@ class Fisherfaces:
         )
         X_pca = self.pca.fit_transform(X)
         self.mean_face = self.pca.mean_
-        W_pca = self.pca.components_.T  # (D, k_pca)
+        W_pca = self.pca.components_.T  
 
         overall_mean = X_pca.mean(axis=0)
         Sw = np.zeros((k_pca, k_pca), dtype=np.float64)
@@ -178,7 +177,7 @@ class Fisherfaces:
             )
 
         W_lda = eigvecs[:, :k_lda]
-        self.projection_ = W_pca @ W_lda  # (D, k_lda)
+        self.projection_ = W_pca @ W_lda  
 
         self.A_train_ = (X - self.mean_face) @ self.projection_
         self.labels_ = y
@@ -208,7 +207,7 @@ class Fisherfaces:
 
     @staticmethod
     def _generalized_eig(Sb: np.ndarray, Sw: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        # Solve Sw^{-1} Sb via a symmetric whitening transform for stability.
+   
         vals, vecs = np.linalg.eigh(Sw)
         vals = np.maximum(vals, 1e-12)
         Sw_inv_sqrt = vecs @ np.diag(1.0 / np.sqrt(vals)) @ vecs.T

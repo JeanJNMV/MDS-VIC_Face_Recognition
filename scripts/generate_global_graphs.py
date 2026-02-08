@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 
 from vic.dataloader import load_yale, make_fixed_test_indices, split_with_fixed_test
-from vic.models import LBPH, DeepLearningModel, Eigenfaces
+from vic.models import LBPH, DeepLearningModel, Eigenfaces, Fisherfaces
 
 
 def evaluate_models_vs_train_size(
@@ -62,6 +62,16 @@ def evaluate_models_vs_train_size(
                 )
                 model = model_fn()
 
+                # Fisherfaces needs more training samples than class
+                if isinstance(model, Fisherfaces) and Xtr.shape[0] <= np.unique(ytr).size:
+                    print(
+                        "  [SKIP] Fisherfaces invalid for this split: "
+                        f"n_samples={Xtr.shape[0]} <= n_classes={np.unique(ytr).size}"
+                    )
+                    if len(results[model_name][str(train_size)]) == 0:
+                        results[model_name].pop(str(train_size), None)
+                    break
+
                 model.fit(Xtr, ytr)
                 y_pred = model.predict(Xte)
 
@@ -82,6 +92,7 @@ lbph = LBPH()
 models = {
     "Eigenfaces": lambda: Eigenfaces(K=30),
     "LBPH": lambda: LBPH(),
+    "Fisherfaces": lambda: Fisherfaces(strict=False, normalize=False, random_state=0),
     "Deep Learning": lambda: DeepLearningModel(),
 }
 
