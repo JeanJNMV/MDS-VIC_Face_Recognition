@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
+from typing import Optional, Tuple
 
 import numpy as np
+import torch
+import torch.nn.functional as F
 from sklearn.decomposition import PCA
-from typing import Tuple, Optional
+from torch import nn
+from torch.utils.data import DataLoader, TensorDataset
 
 
 class Model(ABC):
@@ -223,8 +227,7 @@ class LBPH:
         use_uniform: bool = True,
         weights: Optional[np.ndarray] = None,
     ):
-        """
-        Parameters
+        """Parameters
         ----------
         P : int
             Number of sampling points (default: 8)
@@ -238,6 +241,7 @@ class LBPH:
             Optional region weights (shape = grid)
         eps : float
             Stability constant for chi-square distance
+
         """
         self.P = P
         self.R = R
@@ -259,9 +263,7 @@ class LBPH:
 
         for img in X:
             hist = self._extract_features(img)
-            dists = np.array(
-                [self._chi_square(hist, train_hist) for train_hist in self.histograms]
-            )
+            dists = np.array([self._chi_square(hist, train_hist) for train_hist in self.histograms])
             idx = np.argmin(dists)
             y_pred.append(self.labels[idx])
 
@@ -307,9 +309,7 @@ class LBPH:
 
         for i in range(gh):
             for j in range(gw):
-                region = lbp[
-                    i * h_step : (i + 1) * h_step, j * w_step : (j + 1) * w_step
-                ]
+                region = lbp[i * h_step : (i + 1) * h_step, j * w_step : (j + 1) * w_step]
                 hist, _ = np.histogram(
                     region,
                     bins=self._n_bins,
@@ -369,3 +369,77 @@ class LBPH:
                 mapping[i] = non_uniform_bin
 
         return mapping
+
+
+class TinyCNN(nn.Module):
+    def __init__(self, n_classes):
+        super().__init__()
+
+        self.conv1 = nn.Conv2d(1, 16, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
+
+        self.pool = nn.MaxPool2d(2, 2)
+        self.adapt = nn.AdaptiveAvgPool2d((7, 7))
+
+        self.fc1 = nn.Linear(32 * 7 * 7, 128)  # ORL size: 112×92 → /4
+        self.fc2 = nn.Linear(128, n_classes)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.conv1(x)))
+        x = self.pool(F.relu(self.conv2(x)))
+        x = self.adapt(x)
+        x = x.flatten(1)
+        x = F.relu(self.fc1(x))
+        return self.fc2(x)
+
+
+class DeepLearningModel(Model):
+    def __init__(self):
+        self.model = TinyCNN(40)
+
+    def fit(self, X: np.ndarray, y: np.ndarray, n_epochs: int = 10, verbose=False) -> None:
+        self.model.train()
+        y = y - 1
+        Xtr_t = torch.from_numpy(X).float().unsqueeze(1) / 255.0
+        ytr_t = torch.from_numpy(y).long()
+
+        train_loader = DataLoader(
+            TensorDataset(Xtr_t, ytr_t),
+            batch_size=32,
+            shuffle=True,
+        )
+
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-3)
+        criterion = nn.CrossEntropyLoss()
+
+        for epoch in range(n_epochs):
+            self.model.train()
+            running_loss = 0.0
+
+            for x, y in train_loader:
+                optimizer.zero_grad()
+                logits = self.model(x)
+                loss = criterion(logits, y)
+                loss.backward()
+                optimizer.step()
+
+                running_loss += loss.item() * x.size(0)
+
+            train_loss = running_loss / len(train_loader.dataset)
+            if verbose:
+                print(f"Epoch [{epoch + 1:02d}/{n_epochs}] Train loss: {train_loss:.4f}")
+
+    def predict(self, X: np.ndarray):
+        self.model.eval()
+
+        # Preprocess
+        X_t = torch.from_numpy(X).float().unsqueeze(1) / 255.0
+        preds = []
+
+        with torch.no_grad():
+            for i in range(0, len(X_t), 32):
+                x = X_t[i : i + 32]
+                logits = self.model(x)
+                preds.append(logits.argmax(dim=1).cpu())
+
+        return torch.cat(preds).numpy() + 1

@@ -1,18 +1,16 @@
+import re
+from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
-from collections import defaultdict
-import re
 
 
 def load_orl(path: str = "data/ORL") -> dict[int, np.ndarray]:
     p = Path(path)
     data = {}
 
-    ids = sorted(
-        int(a.name[1:]) for a in p.glob("s*") if a.is_dir() and a.name[1:].isdigit()
-    )
+    ids = sorted(int(a.name[1:]) for a in p.glob("s*") if a.is_dir() and a.name[1:].isdigit())
 
     for sid in ids:
         subject_dir = p / f"s{sid}"
@@ -52,9 +50,7 @@ def load_yale(path: str = "data/Yale") -> dict[int, np.ndarray]:
     return data
 
 
-def make_fixed_test_indices(
-    data: dict, n_test: int = 5, seed: int = 0
-) -> tuple[dict, dict]:
+def make_fixed_test_indices(data: dict, n_test: int = 5, seed: int = 0) -> tuple[dict, dict]:
     rng = np.random.default_rng(seed)
     test_idx = {}
     pool_idx = {}

@@ -1,9 +1,11 @@
-from vic.dataloader import split_with_fixed_test
+from typing import Any, List, Union
+
+import numpy as np
+from joblib import Parallel, delayed
 from sklearn.metrics import accuracy_score, confusion_matrix
 from tqdm import tqdm
-import numpy as np
-from typing import Any, Union, List
-from joblib import Parallel, delayed
+
+from vic.dataloader import split_with_fixed_test
 
 
 def get_metrics_vs_train_size(
@@ -18,9 +20,7 @@ def get_metrics_vs_train_size(
     conf_matrices = {}
 
     for train_size in train_sizes:
-        Xtr, ytr, Xte, yte = split_with_fixed_test(
-            data, test_idx, pool_idx, train_size, seed=seed
-        )
+        Xtr, ytr, Xte, yte = split_with_fixed_test(data, test_idx, pool_idx, train_size, seed=seed)
         model.fit(Xtr, ytr)
         y_pred = model.predict(Xte)
         accuracy_scores[train_size] = accuracy_score(yte, y_pred)
@@ -47,9 +47,7 @@ def get_average_acc_vs_train_size(
         for train_size in train_sizes:
             seed = master_rng.integers(0, 1e6)  # Generate new seed for each train_size
 
-            Xtr, ytr, Xte, yte = split_with_fixed_test(
-                data, test_idx, pool_idx, train_size, seed=seed
-            )
+            Xtr, ytr, Xte, yte = split_with_fixed_test(data, test_idx, pool_idx, train_size, seed=seed)
             model.fit(Xtr, ytr)
             y_pred = model.predict(Xte)
             accuracy_scores[train_size] = accuracy_score(yte, y_pred)
@@ -57,12 +55,8 @@ def get_average_acc_vs_train_size(
         for train_size, acc in accuracy_scores.items():
             avg_accuracy_scores.setdefault(train_size, []).append(acc)
 
-    mean_accuracy_scores = {
-        size: np.mean(accs) for size, accs in avg_accuracy_scores.items()
-    }
-    std_accuracy_scores = {
-        size: np.std(accs) for size, accs in avg_accuracy_scores.items()
-    }
+    mean_accuracy_scores = {size: np.mean(accs) for size, accs in avg_accuracy_scores.items()}
+    std_accuracy_scores = {size: np.std(accs) for size, accs in avg_accuracy_scores.items()}
 
     return mean_accuracy_scores, std_accuracy_scores
 
@@ -78,16 +72,12 @@ def get_metrics_vs_train_size_joblib(
 ):
     def worker(train_size):
         model = model_factory()
-        Xtr, ytr, Xte, yte = split_with_fixed_test(
-            data, test_idx, pool_idx, train_size, seed=seed
-        )
+        Xtr, ytr, Xte, yte = split_with_fixed_test(data, test_idx, pool_idx, train_size, seed=seed)
         model.fit(Xtr, ytr)
         y_pred = model.predict(Xte)
         return train_size, accuracy_score(yte, y_pred), confusion_matrix(yte, y_pred)
 
-    results = Parallel(n_jobs=n_jobs, backend="loky")(
-        delayed(worker)(ts) for ts in train_sizes
-    )
+    results = Parallel(n_jobs=n_jobs, backend="loky")(delayed(worker)(ts) for ts in train_sizes)
 
     acc = {ts: a for ts, a, _ in results}
     cms = {ts: cm for ts, _, cm in results}
