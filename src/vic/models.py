@@ -48,6 +48,175 @@ class Eigenfaces:
         return np.array(y_pred)
 
 
+class Fisherfaces:
+
+    def __init__(
+        self,
+        n_components_pca: Optional[int] = None,
+        n_components_lda: Optional[int] = None,
+        reg: float = 1e-6,
+        *,
+        strict: bool = False,
+        normalize: bool = False,
+        random_state: Optional[int] = None,
+    ):
+        self.n_components_pca = n_components_pca
+        self.n_components_lda = n_components_lda
+        self.reg = reg
+        self.strict = strict
+        self.normalize = normalize
+        self.random_state = random_state
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+        # X: (N, H, W); y: (N,)
+        X = X.reshape(X.shape[0], -1).astype(np.float64, copy=False)
+        if self.normalize:
+            X = self._normalize_samples(X)
+        y = np.asarray(y).ravel()
+
+        classes = np.unique(y)
+        n_classes = len(classes)
+        n_samples, n_features = X.shape
+
+        if n_samples <= n_classes:
+            raise ValueError(
+                "Fisherfaces requires n_samples > n_classes to avoid singular "
+                f"within-class scatter (got n_samples={n_samples}, n_classes={n_classes})."
+            )
+
+        max_pca = min(n_samples - n_classes, n_features)
+        if self.strict:
+            if self.n_components_pca is not None and self.n_components_pca != max_pca:
+                raise ValueError(
+                    "Strict Fisherfaces requires n_components_pca=None or "
+                    f"n_components_pca={max_pca} (min(N-c, D))."
+                )
+            k_pca = max_pca
+        else:
+            k_pca = max_pca if self.n_components_pca is None else min(
+                self.n_components_pca, max_pca
+            )
+        if k_pca < 1:
+            raise ValueError(
+                "Fisherfaces PCA dimension must be >= 1. "
+                f"Got k_pca={k_pca} from n_samples={n_samples}, n_classes={n_classes}."
+            )
+
+        svd_solver = "full" if self.strict else "randomized"
+        self.pca = PCA(
+            n_components=k_pca,
+            svd_solver=svd_solver,
+            whiten=False,
+            random_state=self.random_state,
+        )
+        X_pca = self.pca.fit_transform(X)
+        self.mean_face = self.pca.mean_
+        W_pca = self.pca.components_.T  
+
+        overall_mean = X_pca.mean(axis=0)
+        Sw = np.zeros((k_pca, k_pca), dtype=np.float64)
+        Sb = np.zeros((k_pca, k_pca), dtype=np.float64)
+
+        for cls in classes:
+            Xc = X_pca[y == cls]
+            if Xc.size == 0:
+                continue
+            mean_c = Xc.mean(axis=0)
+            diff = Xc - mean_c
+            Sw += diff.T @ diff
+            mean_diff = (mean_c - overall_mean).reshape(-1, 1)
+            Sb += Xc.shape[0] * (mean_diff @ mean_diff.T)
+
+        add_reg = not self.strict
+        if self.strict:
+            eigvals_sw = np.linalg.eigvalsh(Sw)
+            min_eig = eigvals_sw[0]
+            max_eig = eigvals_sw[-1]
+            if min_eig <= 0:
+                if self.reg > 0:
+                    add_reg = True
+                else:
+                    raise ValueError(
+                        "Within-class scatter is singular in strict mode; "
+                        "set reg>0 or disable strict."
+                    )
+            else:
+                cond_threshold = 1e12
+                cond = max_eig / min_eig
+                if cond > cond_threshold:
+                    if self.reg > 0:
+                        add_reg = True
+                    else:
+                        raise ValueError(
+                            "Within-class scatter is ill-conditioned in strict mode; "
+                            "set reg>0 or disable strict."
+                        )
+        if add_reg and self.reg > 0:
+            Sw += self.reg * np.eye(k_pca)
+        eigvals, eigvecs = self._generalized_eig(Sb, Sw)
+
+        order = np.argsort(eigvals)[::-1]
+        eigvecs = eigvecs[:, order]
+
+        max_lda = min(n_classes - 1, k_pca)
+        if self.strict:
+            if self.n_components_lda is not None and self.n_components_lda != max_lda:
+                raise ValueError(
+                    "Strict Fisherfaces requires n_components_lda=None or "
+                    f"n_components_lda={max_lda} (min(c-1, k_pca))."
+                )
+            k_lda = max_lda
+        else:
+            k_lda = max_lda if self.n_components_lda is None else min(
+                self.n_components_lda, max_lda
+            )
+        if k_lda < 1:
+            raise ValueError(
+                "Fisherfaces LDA dimension must be >= 1. "
+                f"Got k_lda={k_lda} from n_classes={n_classes}, k_pca={k_pca}."
+            )
+
+        W_lda = eigvecs[:, :k_lda]
+        self.projection_ = W_pca @ W_lda  
+
+        self.A_train_ = (X - self.mean_face) @ self.projection_
+        self.labels_ = y
+        self.n_components_pca_ = k_pca
+        self.n_components_lda_ = k_lda
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        if not hasattr(self, "projection_"):
+            raise ValueError("Fisherfaces model is not fitted yet.")
+
+        X = X.reshape(X.shape[0], -1).astype(np.float64, copy=False)
+        if self.normalize:
+            X = self._normalize_samples(X)
+        A_test = (X - self.mean_face) @ self.projection_
+        dists = np.linalg.norm(
+            self.A_train_[None, :, :] - A_test[:, None, :], axis=2
+        )
+        idx = np.argmin(dists, axis=1)
+        return self.labels_[idx]
+
+    @staticmethod
+    def _normalize_samples(X: np.ndarray) -> np.ndarray:
+        means = X.mean(axis=1, keepdims=True)
+        stds = X.std(axis=1, keepdims=True)
+        stds = np.where(stds > 0, stds, 1.0)
+        return (X - means) / stds
+
+    @staticmethod
+    def _generalized_eig(Sb: np.ndarray, Sw: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+   
+        vals, vecs = np.linalg.eigh(Sw)
+        vals = np.maximum(vals, 1e-12)
+        Sw_inv_sqrt = vecs @ np.diag(1.0 / np.sqrt(vals)) @ vecs.T
+        M = Sw_inv_sqrt @ Sb @ Sw_inv_sqrt
+        eigvals, eigvecs = np.linalg.eigh(M)
+        W = Sw_inv_sqrt @ eigvecs
+        return eigvals, W
+
+
 class LBPH:
     def __init__(
         self,
