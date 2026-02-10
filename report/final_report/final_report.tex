@@ -6,6 +6,8 @@
 \usepackage{graphicx}
 \usepackage{amsmath} 
 \usepackage{amssymb} 
+\usepackage{subfig}
+
 
 % Include other packages here, before hyperref.
 
@@ -15,7 +17,7 @@
 \usepackage[breaklinks=true,bookmarks=false]{hyperref}
 \usepackage{todonotes}
 
-\cvprfinalcopy % *** Uncomment this line for the final submission
+\cvprfinalcopy % *** Uncomment this line for the final submission 
 
 \def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
 \def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
@@ -121,7 +123,7 @@ where \( U_K \in \mathbb{R}^{D \times K} \) contains the top \( K \) eigenvector
 
 Fisherfaces \cite{belhumeur1997fisherfaces} is a discriminative subspace method that combines Principal Component Analysis (PCA) with Linear Discriminant Analysis (LDA). It learns a linear projection that maximizes class separability by maximizing the ratio of between-class to within-class scatter.
 
-\paragraph{Formulation.}
+%\paragraph{Formulation.}
 Let each training image be vectorized as $\mathbf{x}\in\mathbb{R}^n$ and let there be $c$ subjects. Denote by $\boldsymbol{\mu}_i$ the mean of class $i$, and by $\boldsymbol{\mu}$ the global mean. The scatter matrices are
 \begin{align}
 S_B &= \sum_{i=1}^c N_i(\boldsymbol{\mu}_i-\boldsymbol{\mu})(\boldsymbol{\mu}_i-\boldsymbol{\mu})^T,\\
@@ -129,13 +131,13 @@ S_W &= \sum_{i=1}^c \sum_{\mathbf{x}_k\in X_i}(\mathbf{x}_k-\boldsymbol{\mu}_i)(
 \end{align}
 The LDA directions solve the generalized eigenproblem $S_B\mathbf{w}=\lambda S_W\mathbf{w}$, with at most $c-1$ discriminant directions.
 
-\paragraph{PCA + LDA (small sample size).}
+%\paragraph{PCA + LDA (small sample size).}
 In face recognition, $n\gg N$, making $S_W$ singular in the original image space. Fisherfaces therefore first projects the data with PCA to a subspace of dimension $k_{\text{pca}}\le N-c$, then applies LDA in that PCA space to obtain up to $k_{\text{lda}}\le c-1$ discriminant components. The final projection is $W = W_{\text{pca}} W_{\text{lda}}$.
 
-\paragraph{Classifier.}
+%\paragraph{Classifier.}
 We use 1-nearest neighbor (1-NN) with Euclidean distance in Fisherface space.
 
-\paragraph{Practical variants.}
+%\paragraph{Practical variants.}
 In experiments, we report both a paper-aligned setting ($k_{\text{pca}}=N-c$, $k_{\text{lda}}=c-1$ when feasible) and stability-oriented variants, such as capping $k_{\text{pca}}$ and adding a small ridge term to the within-class scatter in PCA space.
 
 \subsubsection{Local Binary Pattern Histograms (LBPH)}
@@ -339,7 +341,47 @@ When applying degradations only to the test set, Fisherfaces exhibits characteri
 
 \paragraph{Summary of Fisherfaces conclusions.}
 Across both ORL and Yale, our most robust conclusion is that \textbf{controlling the PCA dimension is the primary lever} for Fisherfaces stability and accuracy. The baseline, paper-aligned choice $k_{\text{pca}}=N-c$ is theoretically motivated (to avoid singular $S_W$), but in practice it can produce non-monotone performance via dimension-driven peaking and numerical conditioning effects. A fixed/capped PCA variant yields more stable, interpretable trends with training size, while strict (fully paper-aligned) Fisherfaces is best treated as a reference configuration rather than the most reliable practical setting in our experimental regime.
+
 \subsubsection{Local Binary Pattern Histogram}
+
+\paragraph{Influence of the parameters $P$ and $R$.}
+We first analyze the sensitivity of LBPH to its key hyperparameters: the number of sampling points $P$ and the radius $R$ of the circular neighborhood. These parameters control the granularity and scale of local texture encoding. The result for the ORL and Yale datasets can respectively be seen in \ref{fig:lbph_hyper}(a) and \ref{fig:lbph_hyper}(b).
+
+On both datasets, we observe that LBPH performance is relatively robust to moderate variations in $P$ and $R$. Recognition accuracy remains high across a wide range of parameter combinations, but the best performance is typically achieved for $P$ in the range of 4 to 8 and $R$ in the range of 2 to 4 pixels. This suggests that capturing local texture information at a moderate scale is sufficient, and even optimal, for discriminating between subjects in these datasets. Extreme values of $P$ and $R$ tend to slightly degrade performance, likely due to either insufficient local detail or excessive smoothing of texture patterns. To mitigate between performace and computational cost, we select $P=8$ and $R=2$ for all subsequent LBPH experiments, as these values consistently yield near-optimal accuracy across both datasets while keeping the feature dimensionality manageable.
+
+\begin{figure}[t]
+    \centering
+    \subfloat[ORL dataset]{
+        \includegraphics[width=0.4\linewidth]{../../figures/LPBH_ORL_accuracy_3d.png}
+        \label{fig:lbph_orl}
+    }
+    \hfill
+    \subfloat[Yale dataset]{
+        \includegraphics[width=0.4\linewidth]{../../figures/LPBH_Yale_accuracy_3d.png}
+        \label{fig:lbph_yale}
+    }
+    \caption{Impact of LBPH parameters $P$ (number of sampling points) and $R$ (radius) on recognition accuracy.}
+    \label{fig:lbph_hyper}
+\end{figure}
+
+\paragraph{Global robustness evaluation protocol and Results by transformation type.}
+
+We evaluate the robustness of LBPH using the same global protocol as for Eigenfaces, applying controlled transformations to the test set and measuring accuracy degradation. We consider 4 transformation families: Gaussian blur, photometric jitter with salt-and-pepper noise, random rotations, and random cropping. The results are presented in Figure~\ref{fig:lbph_robustness}.
+
+Our results indicate that LBPH behaves differently from Eigenfaces and Fisherfaces under these transformations. LBPH is seems sensitive to Gaussian blur, especially on the Yale dataset where the performance decreases to around 60\% at the highest blur level. 
+
+However, LBPH is relatively robust to photometric jitter and salt-and-pepper noise, with only drops on the Yale dataset at the highest noise levels. This suggests that the local texture encoding is less affected by global intensity shifts and localized pixel corruption compared to global appearance-based methods.
+
+For geometric transformations, LBPH shows robustness to rotation until the angle reaches around 15 degrees, beyond which accuracy slightly degrades but remains above 75\% even at 30 degrees. This indicates that while LBPH does not have explicit geometric invariance, its local encoding provides some tolerance to moderate misalignment.
+ 
+Random cropping has the most significant impact on LBPH, on both datasets, as it can remove critical facial regions and disrupt the spatial structure of the histograms. This transformation achieves the single most severe degradation for LBPH, making it a key failure mode to consider in practical applications.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{../../figures/LBPH_robustness.png}
+    \caption{Impact of transformations on the accuracy of LBPH.}
+    \label{fig:lbph_robustness}
+\end{figure}
 
 \subsection{Deep Learning}
 
