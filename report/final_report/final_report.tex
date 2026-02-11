@@ -410,7 +410,14 @@ On Yale, performance remains significantly lower across all training regimes and
 
 \paragraph{Discussion.}
 Overall, these results highlight the strong data dependency of deep learning approaches. While convolutional models have high representational capacity, they require larger datasets or additional regularization strategies to outperform classical methods in small-sample face recognition settings.
+
 \section{Conclusions}
+
+In this study, we presented a comprehensive comparative evaluation of three classical face recognition methods, namely Eigenfaces, Fisherfaces, and Local Binary Pattern Histograms (LBPH), alongside a simple deep learning baseline. By testing these algorithms on the ORL and Yale datasets, we assessed their robustness to real-world degradations and their dependency on training data volume.
+
+Our findings demonstrate a clear divide between global and local appearance models. Global methods, such as Eigenfaces, are highly sensitive to geometric perturbations (like rotations and cropping) and struggle with illumination changes. While Fisherfaces mitigate some of these photometric issues by maximizing class separability, our experiments revealed that its stability is heavily dependent on controlling the PCA dimension. Conversely, the local texture-based LBPH method consistently outperformed the global approaches. It proved highly resilient in low-data scenarios and under significant illumination variations, though it remains vulnerable to severe spatial cropping and heavy blurring.
+
+Finally, the evaluation of our CNN baseline underscored the limitations of deep learning in small-sample face recognition tasks. Trained from scratch on limited data, the network suffered from severe overfitting and failed to generalize effectively. Ultimately, this project highlights that while deep learning dominates large-scale vision tasks, classical methods still hold significant value in constrained settings, and that understanding their failure modes is crucial for designing robust face recognition systems.
 
 {\small
 \bibliographystyle{ieee}
