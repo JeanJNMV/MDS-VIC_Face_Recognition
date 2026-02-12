@@ -24,12 +24,13 @@ uv run my_script.py
 
 ## Project Structure
 
+```
 src/
-├── dataloader/   # Utilities for loading ORL and Yale datasets  
-├── metrics/      # Evaluation metrics and analysis tools  
-├── models/       # Four implemented models (Scikit-learn API compatible)  
-└── transform/    # Data transformation and augmentation scripts  
-
+├── dataloader.py   # Utilities for loading ORL and Yale datasets  
+├── metrics.py      # Evaluation metrics and analysis tools  
+├── models.py       # Four implemented models (Scikit-learn API compatible)  
+└── transform.py    # Data transformation and augmentation scripts  
+```
 
 ## Notebooks
 
