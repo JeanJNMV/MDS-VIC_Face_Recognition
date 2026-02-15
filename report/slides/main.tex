@@ -178,8 +178,6 @@ Hyperparameters: sampling points \(P\), radius \(R\), number of regions.
   \end{itemize}
 \end{columns}
 
-\medskip
-\footnotesize (Insert your figures on the next slide.)
 \end{frame}
 
 % ------------------ Global Comparison Figures ------------------
@@ -197,31 +195,24 @@ Hyperparameters: sampling points \(P\), radius \(R\), number of regions.
 \end{frame}
 
 % ------------------ Eigenfaces Robustness ------------------
-\begin{frame}{Eigenfaces: Robustness Findings}
+\begin{frame}{Eigenfaces: Hyperparameter Dependence}
 \begin{itemize}
   \item \textbf{Hyperparameter \(K\):} accuracy improves quickly then saturates beyond \(K\approx 50\).
-  \item \textbf{Most destructive:} geometric misalignment (rotation, crop).
-  \item \textbf{Moderate effect:} photometric jitter + salt-and-pepper noise (global corruption impacts projection).
-  \item \textbf{Less effect:} blur (in your experiments: relatively mild degradation).
 \end{itemize}
 
 \medskip
 \centering
-\includegraphics[width=0.5\linewidth]{../../figures/eigenfaces_hyper.png}
+\includegraphics[width=0.6\linewidth]{../../figures/eigenfaces_hyper.png}
 \end{frame}
 
 % ------------------ Eigenfaces Robustness Figures ------------------
-\begin{frame}{Eigenfaces: Photometric Robustness}
+\begin{frame}{Eigenfaces: Global Transformations}
+\begin{itemize}
+        \item \textbf{Most destructive:} geometric misalignment (rotation, crop).
+        \item \textbf{Moderate effect:} photometric jitter + salt-and-pepper noise (global corruption impacts projection).
+\end{itemize}
 \centering
-\begin{columns}[T,onlytextwidth]
-    \column{0.5\textwidth}
-    \includegraphics[width=\linewidth]{../../figures/eigenfaces_gb.png}\\
-    \scriptsize Gaussian blur
-
-    \column{0.5\textwidth}
-    \includegraphics[width=\linewidth]{../../figures/eigenfaces_sp_noise.png}\\
-    \scriptsize Salt-and-pepper noise
-\end{columns}
+\includegraphics[width=0.85\linewidth]{../../figures/eigenfaces_noise.png}
 \end{frame}
 
 \begin{frame}{Eigenfaces: Geometric Robustness}
@@ -250,7 +241,7 @@ Hyperparameters: sampling points \(P\), radius \(R\), number of regions.
 
 \medskip
 \centering
-\includegraphics[width=0.95\linewidth]{../../figures/Fisherfaces_robustness.png}
+\includegraphics[width=0.80\linewidth]{../../figures/Fisherfaces_robustness.png}
 \end{frame}
 
 % ------------------ LBPH Robustness ------------------
