@@ -77,19 +77,28 @@ Accuracy:
 \end{frame}
 
 % ------------------ Eigenfaces ------------------
-\begin{frame}{Eigenfaces (PCA): Core Idea}
-Vectorize image \(\mathbf{x}\in\mathbb{R}^D\). Mean \(\boldsymbol{\mu}=\frac{1}{N}\sum_i \mathbf{x}_i\).
-Centered matrix \(X=[\mathbf{x}_1-\mu,\dots,\mathbf{x}_N-\mu]\in\mathbb{R}^{D\times N}\).
+\begin{frame}{Eigenfaces (PCA)}
 
 \medskip
-PCA subspace \(U_K\in\mathbb{R}^{D\times K}\) from covariance \(C=\frac{1}{N}XX^\top\).
-
-\medskip
-Projection:
+\textbf{1. Center data}
 \[
-\mathbf{z}=U_K^\top(\mathbf{x}-\boldsymbol{\mu}).
+\boldsymbol{\mu} = \frac{1}{N}\sum_i \mathbf{x}_i,
+\quad
+X = [\mathbf{x}_1-\boldsymbol{\mu}, \dots, \mathbf{x}_N-\boldsymbol{\mu}]
 \]
-Classification: 1-NN (Euclidean) in \(\mathbf{z}\)-space.
+\medskip
+\textbf{2. Compute PCA}
+\[
+C = \frac{1}{N}XX^\top
+\quad \rightarrow \quad
+U_K \text{ (top eigenvectors = eigenfaces)}
+\]
+\medskip
+\textbf{3. Project and classify}
+\[
+\mathbf{z} = U_K^\top (\mathbf{x}-\boldsymbol{\mu})
+\]
+1-NN in PCA space (Euclidean distance).
 \end{frame}
 
 % ------------------ Fisherfaces ------------------
