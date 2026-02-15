@@ -195,8 +195,9 @@ subspace methods and local texture-based representations.
 
 \subsection{Global Comparison of Methods}
 
-We now provide a global comparison between the three classical face recognition methods. 
-For both methods, we evaluate recognition accuracy as a function of the number of training images per subject, using a fixed test protocol and multiple random splits. Reported values correspond to mean accuracies over repeated experiments.
+We now provide a global comparison of the classical methods under a common low-data protocol. 
+For compactness, Figures~\ref{fig:global_orl} and \ref{fig:global_yale} plot Eigenfaces and LBPH directly. Fisherfaces is discussed in the same global context below and analyzed in detail in Section~5.2.2 because its behavior depends strongly on the PCA/LDA configuration.
+Recognition accuracy is reported as a function of the number of training images per subject, using fixed test identities and repeated random training draws.
 
 \paragraph{ORL dataset.}
 Figure~\ref{fig:global_orl} reports the accuracy obtained on the ORL dataset as the number of training images per subject increases from 1 to 7.
@@ -204,6 +205,8 @@ Figure~\ref{fig:global_orl} reports the accuracy obtained on the ORL dataset as 
 Eigenfaces exhibit a strong dependency on the amount of available training data. With very limited supervision (1-2 images per subject), performance is relatively low and unstable, reflecting the difficulty of estimating a meaningful global PCA subspace from few samples. Accuracy improves steadily as more images are available, eventually reaching a plateau around 92--93\% for 6-7 training images per subject.
 
 In contrast, LBPH consistently outperforms Eigenfaces across all training regimes. Even in the low-data setting, LBPH achieves higher accuracy, and its performance saturates earlier, exceeding 97\% accuracy from 5 training images per subject onward. This behavior highlights the robustness of local texture-based representations when only limited data is available.
+
+Fisherfaces on ORL is more configuration-sensitive: with the paper-aligned PCA growth ($k_{\text{pca}}=N-c$), performance can become non-monotone with train size, while fixed/capped $k_{\text{pca}}$ produces substantially more stable and higher accuracy curves. In practice, this places Fisherfaces between Eigenfaces and LBPH in robustness, but only when PCA dimensionality is controlled.
 
 \begin{figure}[h]
     \centering
@@ -220,6 +223,8 @@ Overall accuracies are lower than on ORL for both methods. Eigenfaces show clear
 
 LBPH again demonstrates superior robustness. While the gap between the two methods is smaller than on ORL, LBPH consistently achieves higher accuracy, reaching approximately 84--85\% at saturation. This confirms that local descriptors are less sensitive to global appearance changes such as illumination, which strongly affect PCA-based representations.
 
+On Yale, Fisherfaces generally benefits from more training data and behaves more regularly than on ORL, especially under fixed/capped $k_{\text{pca}}$. This is consistent with LDA's objective (reducing within-class illumination scatter), but Fisherfaces remains more sensitive than LBPH to geometric distribution shifts.
+
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\linewidth]{../../figures/GlobalComp_Yale_noDeep.png}
@@ -228,7 +233,7 @@ LBPH again demonstrates superior robustness. While the gap between the two metho
 \end{figure}
 
 \paragraph{Discussion.}
-Across both datasets, LBPH dominates Eigenfaces in all training regimes. The advantage is particularly pronounced in low-data settings and on datasets with strong appearance variability. Eigenfaces rely on a global linear subspace and precise pixel-level alignment, making them sensitive to limited data and distribution shifts. LBPH, by contrast, encodes local texture patterns and is therefore more robust to such variations.
+Across both datasets, the three methods show a consistent hierarchy. Eigenfaces is the most fragile global baseline, particularly under data scarcity and distribution shifts. Fisherfaces improves discrimination and illumination handling, but its stability is strongly controlled by PCA dimensionality choices. LBPH remains the most reliable method overall in our regime, especially in low-data settings and under appearance variability, due to its local texture representation.
 
 
 \subsection{Robustness Analysis by Method}
@@ -289,58 +294,36 @@ Photometric jitter combined with salt-and-pepper noise also significantly impact
 
 
 \subsubsection{Fisherfaces}
-\paragraph{Experimental protocol (what our curves mean).}
-Unless stated otherwise, Fisherfaces is evaluated using:
-(i) a \textbf{fixed test set} (fixed test indices per dataset),
-(ii) varying the number of training images per subject (train size),
-(iii) repeated experiments over multiple random training draws from the remaining pool (\texttt{n\_exp}) to estimate a mean accuracy and a 95\% confidence interval,
-and (iv) a \textbf{1-NN Euclidean classifier} in Fisherface space.
-For robustness studies, degradations (rotation, Gaussian noise, blur, flips, brightness scaling) are applied \textbf{only to test images}, keeping training images unchanged.
+\paragraph{Influence of hyperparameters ($k_{\text{pca}}$, $k_{\text{lda}}$, regularization).}
+We evaluate Fisherfaces with a fixed test split, repeated random training draws, and a 1-NN Euclidean classifier in Fisherface space. The dominant design choice is the PCA dimension $k_{\text{pca}}$. In the paper-aligned setting, $k_{\text{pca}}=N-c$ grows with training size, while $k_{\text{lda}}\le c-1$. Empirically, this growth can induce a peaking effect: after an intermediate regime, increasing dimensionality can reduce test accuracy due to higher estimation variance and numerical conditioning issues in the LDA stage.
 
-\paragraph{Core empirical phenomenon: dimensionality-driven ``peaking''.}
-A consistent and dominant effect across our Fisherfaces experiments is the impact of how the PCA dimension $k_{\text{pca}}$ is chosen.
-In the paper-aligned Fisherfaces construction, $k_{\text{pca}} = N-c$ grows with the number of training samples $N$. In practice, this means that as we increase the number of training images per subject, the PCA subspace dimension increases automatically.
+This effect is strongest on ORL (larger number of classes), where baseline Fisherfaces can become non-monotone with train size. Fixing/capping $k_{\text{pca}}$ across train sizes produces much more stable curves and substantially better accuracy. On Yale, the same phenomenon is milder, but fixed/capped $k_{\text{pca}}$ still yields the most consistent behavior. Additional variants (strict mode, ridge regularization, per-image normalization) change stability margins, but none dominates the impact of PCA dimension control.
 
-Empirically, this can induce a \textbf{peaking effect} (also known as a Hughes-type phenomenon in small-sample discriminant analysis): beyond some point, adding degrees of freedom increases estimation variance and/or numerical instability in the subsequent LDA step and can \emph{reduce} generalization accuracy, even though more training data is available. Importantly, we verified this is \textbf{not} merely an artifact of random train/test splits by using \textbf{nested training sets} (train sets that grow by inclusion). Under nested splits, the non-monotonicity remains for the baseline choice $k_{\text{pca}}=N-c$, confirming that the behavior is primarily methodological.
+\paragraph{Robustness evaluation protocol.}
+We report Fisherfaces robustness under \textbf{test-only} degradations: the training set is kept clean while the same degradation is applied to all test images. We use a fixed test set (3 images/subject) and a fixed training size (7 images/subject) with multiple random training draws, and we report mean accuracy with 95\% confidence intervals.
+We sweep blur $\sigma \in \{0,1,3,5,7\}$, Gaussian noise standard deviation $\in \{0,1,5,10,20\}$, rotation angles $\in \{0^\circ,5^\circ,10^\circ,15^\circ,20^\circ,30^\circ\}$, brightness factors $\in \{0.1,0.5,1,2,5\}$, and flips in $\{\text{none},\text{horizontal},\text{vertical}\}$.
+Figure~\ref{fig:fisherfaces_robustness} summarizes the sensitivity trends on ORL and Yale.
 
-\paragraph{ORL (AT\&T) dataset: baseline Fisherfaces is unstable, fixed PCA resolves it.}
-On ORL (40 subjects, 10 images/subject), the baseline Fisherfaces curve (with the default $k_{\text{pca}}=N-c$ growth) is \textbf{low and non-monotone}. Even when averaged across repetitions, the mean accuracy remains modest and the confidence intervals overlap heavily across train sizes, indicating that ``more training images'' does not reliably improve performance under this configuration.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{../../figures/Fisherfaces_robustness.png}
+    \caption{Sensitivity of Fisherfaces to blur, Gaussian noise, rotation, brightness scaling, and flips (mean $\pm$ 95\% CI), evaluated with test-only degradations on ORL and Yale.}
+    \label{fig:fisherfaces_robustness}
+\end{figure}
 
-In contrast, when we \textbf{fix (or cap) $k_{\text{pca}}$ across train sizes} (i.e., keep the PCA subspace dimension constant while increasing the number of training images), Fisherfaces becomes \textbf{highly stable and almost monotone}, reaching substantially higher accuracy (in our plots, approximately in the $0.9$ range for most train sizes). This provides strong evidence that the main driver of poor/non-monotone ORL performance is the \textbf{dimension growth} of the PCA stage, not the dataset being ``in-the-wild'' or the split variance.
+\paragraph{Results by transformation type.}
+\textbf{Rotation.} Rotation is among the most destructive transformations. On both datasets, accuracy drops sharply at moderate angles (already at $5^\circ$) and becomes very low beyond $10^\circ$--$15^\circ$. This reflects Fisherfaces' reliance on pixel-level alignment: a global linear subspace offers no explicit geometric invariance.
 
-\paragraph{Strict vs regularized vs normalized variants on ORL.}
-We additionally compare controlled Fisherfaces variants:
-\begin{itemize}
-    \item \textbf{Strict (paper-aligned) Fisherfaces} can perform reasonably at smaller train sizes but exhibits sharp drops at larger sizes in our ORL experiments. This indicates that, despite the theoretical nonsingularity argument in the PCA space, the estimated within-class scatter $\widetilde{S}_W$ can still be \textbf{numerically ill-conditioned}, making the generalized eigenproblem unstable without regularization.
-    \item \textbf{Regularization} of $\widetilde{S}_W$ improves stability compared to strict mode but does not, by itself, eliminate the non-monotonicity caused by increasing $k_{\text{pca}}$.
-    \item \textbf{Per-image normalization} provides only modest and inconsistent gains on ORL; it does not fix the dominant dimension-driven instability.
-\end{itemize}
+\textbf{Flip.} Flips create a strong distribution shift. Even a horizontal flip causes a large accuracy drop, and vertical flips nearly break recognition (with vertical flips slightly less destructive than horizontal on Yale). This is expected because the learned subspace and nearest-neighbor matching are trained on a specific canonical orientation.
 
-\paragraph{Yale dataset: Fisherfaces benefits from more data, but fixed PCA still helps.}
-On Yale (15 subjects, systematic illumination changes and expression/accessory variations), Fisherfaces shows a clearer \textbf{increase in accuracy with train size} under the baseline configuration, and the confidence intervals typically tighten as train size grows. This behavior is consistent with Fisherfaces' objective: LDA explicitly aims to reduce within-class scatter caused by nuisance variations (notably illumination) while maintaining between-class separation.
+\textbf{Blur.} Increasing Gaussian blur overall degrades performance, as it removes high-frequency discriminative information. The degradation is more pronounced on ORL than on Yale.
 
-However, even on Yale, fixing/capping the PCA dimension yields the \textbf{best overall performance and the most monotone behavior}. In our experiments, the gap between baseline and fixed-PCA variants is smaller than on ORL, indicating that Yale is \emph{less sensitive} to the peaking effect under $k_{\text{pca}}=N-c$ growth, but the effect is still measurable.
+\textbf{Brightness scaling.} Brightness scaling shows a peaked behavior: performance is maximal near factor 1.0 and deteriorates strongly for extreme darkening/brightening, often approaching chance-level recognition under severe shifts. This indicates limited robustness to global intensity scaling when per-image normalization is not enforced.
 
-\paragraph{Why can Yale look ``easier'' than ORL for Fisherfaces despite being described as challenging?}
-A key objective explanation is the interaction between (i) the \textbf{number of classes} and (ii) the induced PCA dimension growth:
-\begin{itemize}
-    \item ORL has $c=40$ subjects; for a fixed number of training images per subject, $N$ and thus $N-c$ become large quickly, increasing $k_{\text{pca}}$ and amplifying the peaking effect.
-    \item Yale has $c=15$ subjects, so $N-c$ grows more slowly and the discriminant estimation is less fragile in our regime.
-\end{itemize}
-Thus, Yale can be ``challenging'' for naive global appearance methods (e.g., raw PCA/Eigenfaces) because illumination dominates, while being comparatively favorable to Fisherfaces which is designed to reduce within-class illumination scatter.
+\textbf{Gaussian noise.} In contrast to geometric and strong photometric shifts, additive Gaussian noise in the tested range yields little to no degradation: accuracy remains close to its no-noise baseline across noise levels, within confidence intervals. This suggests that, under our test-only protocol and for these noise magnitudes, the dominant robustness bottlenecks are misalignment and large illumination scaling rather than small pixel-level perturbations.
 
-\paragraph{Robustness to degradations (test-only transforms).}
-When applying degradations only to the test set, Fisherfaces exhibits characteristic sensitivities:
-\begin{itemize}
-    \item \textbf{Rotation:} accuracy drops quickly with moderate rotations, indicating sensitivity to geometric misalignment (expected for global linear subspace models).
-    \item \textbf{Blur:} increasing blur degrades performance, consistent with the loss of high-frequency discriminative information in global appearance representations.
-    \item \textbf{Flips:} horizontal flips degrade accuracy; vertical flips severely break recognition (strong distribution shift).
-    \item \textbf{Brightness scaling:} strong deterioration for extreme brightness factors, especially without per-image normalization.
-    \item \textbf{Gaussian noise:} within the tested noise range, the degradation can be less pronounced than rotation/blur/flip, suggesting that geometric and photometric shifts dominate the failure modes.
-\end{itemize}
-
-\paragraph{Summary of Fisherfaces conclusions.}
-Across both ORL and Yale, our most robust conclusion is that \textbf{controlling the PCA dimension is the primary lever} for Fisherfaces stability and accuracy. The baseline, paper-aligned choice $k_{\text{pca}}=N-c$ is theoretically motivated (to avoid singular $S_W$), but in practice it can produce non-monotone performance via dimension-driven peaking and numerical conditioning effects. A fixed/capped PCA variant yields more stable, interpretable trends with training size, while strict (fully paper-aligned) Fisherfaces is best treated as a reference configuration rather than the most reliable practical setting in our experimental regime.
+\paragraph{Discussion.}
+Fisherfaces improves over Eigenfaces when class-discriminative structure is well estimated, but its practical reliability depends primarily on controlling $k_{\text{pca}}$. Under controlled dimensionality, Fisherfaces is competitive on photometric variation (especially Yale), yet it remains distinctly vulnerable to geometric shifts (rotation/flip), where LBPH is typically more robust.
 
 \subsubsection{Local Binary Pattern Histogram}
 
