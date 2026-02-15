@@ -207,26 +207,35 @@ Hyperparameters: sampling points \(P\), radius \(R\), number of regions.
 
 \medskip
 \centering
-\includegraphics[width=0.75\linewidth]{../../figures/eigenfaces_hyper.png}
+\includegraphics[width=0.5\linewidth]{../../figures/eigenfaces_hyper.png}
 \end{frame}
 
 % ------------------ Eigenfaces Robustness Figures ------------------
-\begin{frame}{Eigenfaces: Robustness Curves}
+\begin{frame}{Eigenfaces: Photometric Robustness}
 \centering
-\includegraphics[width=0.95\linewidth]{../../figures/eigenfaces_noise.png}
+\begin{columns}[T,onlytextwidth]
+    \column{0.5\textwidth}
+    \includegraphics[width=\linewidth]{../../figures/eigenfaces_gb.png}\\
+    \scriptsize Gaussian blur
 
-\medskip
-\scriptsize (Optional detailed breakdown slide below.)
+    \column{0.5\textwidth}
+    \includegraphics[width=\linewidth]{../../figures/eigenfaces_sp_noise.png}\\
+    \scriptsize Salt-and-pepper noise
+\end{columns}
 \end{frame}
 
-\begin{frame}{Eigenfaces: Breakdown by Transformation}
+\begin{frame}{Eigenfaces: Geometric Robustness}
 \centering
-\includegraphics[width=0.95\linewidth]{../../figures/eigenfaces_gb.png}\\[1mm]
-\includegraphics[width=0.95\linewidth]{../../figures/eigenfaces_sp_noise.png}\\[1mm]
-\includegraphics[width=0.95\linewidth]{../../figures/eigenfaces_rotations.png}\\[1mm]
-\includegraphics[width=0.95\linewidth]{../../figures/eigenfaces_crops.png}
-\end{frame}
+\begin{columns}[T,onlytextwidth]
+    \column{0.5\textwidth}
+    \includegraphics[width=\linewidth]{../../figures/eigenfaces_rotations.png}\\
+    \scriptsize Rotation
 
+    \column{0.5\textwidth}
+    \includegraphics[width=\linewidth]{../../figures/eigenfaces_crops.png}\\
+    \scriptsize Cropping
+\end{columns}
+\end{frame}
 % ------------------ Fisherfaces Robustness ------------------
 \begin{frame}{Fisherfaces: Key Results}
 \begin{itemize}
